@@ -1,16 +1,19 @@
 #include <iostream>
+#include <String>
 
 using namespace std;
 
 int Menu();
+int RandomNumOrChar();
+string IDGenerator();
 
 int main() {
 	int choice;
+	string ID = " ";
 
 	choice = Menu();
 	switch (choice) {
 	case 1: {
-
 		break;
 	}
 	case 2: {
@@ -54,4 +57,26 @@ int Menu() {
 
 	cin >> choice;
 	return choice;
+}
+
+int RandomNumOrChar() {
+	static const char alphanum[] =
+		"0123456789"
+		"!@#$%^&*"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz";
+
+	int Length = sizeof(alphanum) - 1;
+
+	return alphanum[rand() % Length];
+}
+
+string IDGenerator() {
+	string ID;
+
+	for (int i = 0; i < 9; i++) {
+		ID += RandomNumOrChar();
+	}
+	cout << ID;
+	return ID;
 }

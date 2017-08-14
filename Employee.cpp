@@ -23,9 +23,6 @@ std::string Employee::getName()
 
 std::string Employee::getGender()
 {	
-	std::string M = "Male"; 
-	std::string F = "Female";
-
 	if (m_Gender == 'M') {
 		return "Male";
 	}
