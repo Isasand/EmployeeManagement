@@ -41,6 +41,11 @@ std::string Employee::getDepartment()
 	return m_Department;
 }
 
+std::string Employee::getDateOfJoining()
+{
+	return m_DateOfJoining;
+}
+
 int Employee::getSalary()
 {
 	return m_Salary;

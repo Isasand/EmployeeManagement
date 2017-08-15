@@ -23,6 +23,7 @@ public:
 	std::string getDateOfBirth();
 	std::string getDesignation();
 	std::string getDepartment();
+	std::string getDateOfJoining();
 	int getSalary();
 	void getInfo();
 	
