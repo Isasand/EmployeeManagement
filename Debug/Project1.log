@@ -1,4 +1,4 @@
 ﻿  main.cpp
-c:\users\isa\documents\visual studio 2017\projects\2017-08-14\project1\project1\main.cpp(28): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\isa\documents\visual studio 2017\projects\2017-08-14\project1\project1\main.cpp(29): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Project1.vcxproj -> C:\Users\Isa\Documents\Visual Studio 2017\Projects\2017-08-14\Project1\Debug\Project1.exe
   Project1.vcxproj -> C:\Users\Isa\Documents\Visual Studio 2017\Projects\2017-08-14\Project1\Debug\Project1.pdb (Partial PDB)

@@ -53,5 +53,5 @@ void Employee::getInfo()
 	cout << "Date of birth: " << m_DateOfBirth << endl;
 	cout << "Designation: " << m_Designation << endl;
 	cout << "Department: " << m_Department << endl;
-	cout << "Salary: " << m_Salary << endl;
+	cout << "Salary: " << m_Salary << endl << endl;
 }
