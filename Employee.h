@@ -17,6 +17,12 @@ public:
 	};
 	~Employee();
 
+	void setName(std::string argName);
+	void setGender(std::string argGender);
+	void setDateOfBirth(std::string argDOB);
+	void setDesignation(std::string argDesignation);
+	void setDepartment(std::string argDepartment);
+	void setDateOfJoining(std::string argDOJ);
 	std::string getID();
 	std::string getName();
 	std::string getGender();

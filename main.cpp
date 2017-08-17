@@ -14,6 +14,7 @@ int ProfileMenu();
 int Search(vector <Employee*> listOfEmployees, int index, int& option);
 int ModMenu(vector <Employee*> listOfEmployees, int chosenEmployee);
 void ModifyProfile(vector <Employee*> listOfEmployees, int chosenEmployee);
+void ChangeInfo(vector <Employee*> listOfEmployees, int chosenEmployee, int option);
 
 int main() {
 	int choice;
@@ -64,7 +65,7 @@ int main() {
 						else {
 							break; //or go back to menu
 						}
-						
+
 					}
 					if (option == 2) {
 						ModifyProfile(testEmployees, chosenEmployee); //option 2 = modify profile
@@ -190,21 +191,27 @@ int Search(vector <Employee*> listOfEmployees, int index, int& option) {
 	if (found > 1) {
 		cout << found << " employees found: " << endl << endl;
 
-		if (option == 1) {
-			cout << "Choose which profile to preview ";
+		switch (option) {
+		case 1: {
+			cout << "Choose which profile to preview";
+			break;
 		}
-
-		if (option == 2) {
-			cout << "Choose which profile to modify ";
+		case 2: {
+			cout << "Choose which profile to modify";
+			break;
 		}
-		else if (option == 3) {
-			cout << "Choose which profile to delete ";
+		case 3: {
+			cout << "Choose which profile to delete";
+			break;
 		}
-		else if (option == 4) {
-			cout << "Choose employee to change salary: ";
+		case 4: {
+			cout << "Choose an employee to change salary/ employment";
+			break;
 		}
-		else if (option == 5) {
-			cout << "Choose employee for salary calculation: ";
+		case 5: {
+			cout << "Choose employee for salary calculation";
+			break;
+		}
 		}
 
 		for (int i = 0; i < found; i++) {
@@ -242,5 +249,60 @@ void ModifyProfile(vector <Employee*> listOfEmployees, int chosenEmployee) {
 	system("CLS");
 	cout << "CHOOSE FIELD TO UPDATE" << endl;
 	option = ModMenu(listOfEmployees, chosenEmployee);
+	
+	ChangeInfo(listOfEmployees, chosenEmployee, option);
 
+}
+
+
+void ChangeInfo(vector <Employee*> listOfEmployees, int chosenEmployee, int option) {
+	string newInfo;
+
+	switch (option) {
+	case 1: {
+		cout << "Enter new name: ";
+		cin.ignore(1000, '\n');
+		getline(cin, newInfo);
+		listOfEmployees.at(chosenEmployee)->setName(newInfo);
+		break;
+	}
+	case 2: {
+		cout << "Enter new gender: ";
+		getline(cin, newInfo);
+		cin.ignore(1000, '\n');
+		listOfEmployees.at(chosenEmployee)->setGender(newInfo);
+		break;
+	}
+	case 3: {
+		cout << "Enter new date of birth [YYYY-MM-DD]: "; 
+		getline(cin, newInfo);
+		cin.ignore(1000, '\n');
+		listOfEmployees.at(chosenEmployee)->setDateOfBirth(newInfo);
+		break;
+	}
+	case 4: {
+		cout << "Enter new designation: ";
+		getline(cin, newInfo);
+		cin.ignore(1000, '\n');
+		listOfEmployees.at(chosenEmployee)->setDesignation(newInfo);
+		break;
+	}
+	case 5: {
+		cout << "Enter new department: ";
+		getline(cin, newInfo);
+		cin.ignore(1000, '\n');
+		listOfEmployees.at(chosenEmployee)->setDepartment(newInfo);
+		break;
+	}
+	case 6: {
+		cout << "Enter new date of joining [YYYY-MM-DD]: ";
+		getline(cin, newInfo);
+		cin.ignore(1000, '\n');
+		listOfEmployees.at(chosenEmployee)->setDateOfJoining(newInfo);
+		break;
+	}
+	case 7: {
+		break;
+	}
+	}
 }

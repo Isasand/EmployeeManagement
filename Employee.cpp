@@ -11,6 +11,36 @@ Employee::~Employee()
 {
 }
 
+void Employee::setName(std::string argName)
+{
+	m_Name = argName;
+}
+
+void Employee::setGender(std::string argGender)
+{
+	m_Gender = argGender;
+}
+
+void Employee::setDateOfBirth(std::string argDOB)
+{
+	m_DateOfBirth = argDOB;
+}
+
+void Employee::setDesignation(std::string argDesignation)
+{
+	m_Designation = argDesignation;
+}
+
+void Employee::setDepartment(std::string argDepartment)
+{
+	m_Department = argDepartment;
+}
+
+void Employee::setDateOfJoining(std::string argDOJ)
+{
+	m_DateOfJoining = argDOJ;
+}
+
 std::string Employee::getID()
 {
 	return m_ID;
