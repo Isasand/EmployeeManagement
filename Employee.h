@@ -1,32 +1,24 @@
 #pragma once
+#include "User.h"
 #include <String>
 #include <iostream>
 
-class Employee
+class Employee : public User
 {
 public:
 	Employee();
-	Employee(std::string argName, std::string argID, std::string argGender, std::string argDateOfBirth, std::string argDesignation, std::string argDepartment, int argSalary) {
-		m_Name = argName;
-		m_ID = argID;
-		m_Gender = argGender;
-		m_DateOfBirth = argDateOfBirth;
+	Employee(string argName, string argPassword, string argGender, string argDateOfBirth) : User(argName, argPassword, argGender, argDateOfBirth) {};
+	Employee(std::string argDesignation, std::string argDepartment, string dateOfJoining, int argSalary) {
 		m_Designation = argDesignation;
 		m_Department = argDepartment;
 		m_Salary = argSalary;
 	};
 	~Employee();
 
-	void setName(std::string argName);
-	void setGender(std::string argGender);
-	void setDateOfBirth(std::string argDOB);
 	void setDesignation(std::string argDesignation);
 	void setDepartment(std::string argDepartment);
 	void setDateOfJoining(std::string argDOJ);
-	std::string getID();
-	std::string getName();
-	std::string getGender();
-	std::string getDateOfBirth();
+	void setSalary(int argSalary);
 	std::string getDesignation();
 	std::string getDepartment();
 	std::string getDateOfJoining();
@@ -34,10 +26,6 @@ public:
 	void getInfo();
 	
 private: 
-	std::string m_Name;
-	std::string m_ID;
-	std::string m_Gender;
-	std::string m_DateOfBirth;
 	std::string m_Designation;
 	std::string m_Department;
 	std::string m_DateOfJoining;

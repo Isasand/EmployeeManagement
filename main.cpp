@@ -1,4 +1,5 @@
 #include "Employee.h"
+#include "Program.h"
 #include <iostream>
 #include <String>
 #include <time.h>
@@ -7,37 +8,46 @@
 
 using namespace std;
 
-int Menu();
+void AddEmployeeInfo(vector <Employee*> listOfEmployees, string argDesignation, string argDepartment, int argSalary, int &count);
 int RandomNumOrChar();
 string IDGenerator();
-int ProfileMenu();
-int Search(vector <Employee*> listOfEmployees, int index, int& option);
-int ModMenu(vector <Employee*> listOfEmployees, int chosenEmployee);
-void ModifyProfile(vector <Employee*> listOfEmployees, int chosenEmployee);
+int Search(Program *program, vector <Employee*> listOfEmployees, int index, int& option);
+void ModifyProfile(Program *program, vector <Employee*> listOfEmployees, int chosenEmployee);
+void Change(string infoToChange, vector <Employee*> listOfEmployees, int chosenEmployee);
 void ChangeInfo(vector <Employee*> listOfEmployees, int chosenEmployee, int option);
 
 int main() {
+	Program *program = new Program();
+
 	int choice;
 	string ID;
 	vector <Employee*>testEmployees;
 	int hardCodedIndex = 4;
+	int count = 0;
 	int chosenEmployee, option;
 	bool on = true;
 
 	//adding database later
 	Employee *hardCodedEmp[4];
-	hardCodedEmp[0] = new Employee("Markus Svensson", "45Fk2%93", "Male", "1976:05:02", "CEO", "HR", 15000);
-	hardCodedEmp[1] = new Employee("Johan Olsson", "42Dks=1A", "Male", "1953:04:22", "MD", "HR", 6400);
-	hardCodedEmp[2] = new Employee("Markus Svensson", "Ks01!2lR", "Male", "1983:02:08", "SPV", "PRO", 3200);
-	hardCodedEmp[3] = new Employee("Linda Skoge", "k#54uDl?", "Female", "1976:04:05", "GM", "HR", 7000);
+
+	hardCodedEmp[0] = new Employee("Markus Svensson", "45Fk2%93", "Male", "1976:05:02");
+	hardCodedEmp[1] = new Employee("Johan Olsson", "42Dks=1A", "Male", "1953:04:22");
+	hardCodedEmp[2] = new Employee("Markus Svensson", "Ks01!2lR", "Male", "1983:02:08");
+	hardCodedEmp[3] = new Employee("Linda Skoge", "k#54uDl?", "Female", "1976:04:05");
+
 
 	for (int i = 0; i < 4; i++)
 		testEmployees.push_back(hardCodedEmp[i]);
 
+	AddEmployeeInfo(testEmployees, "VD", "HR", 15000, count);
+	AddEmployeeInfo(testEmployees, "MD", "HR", 6400, count);
+	AddEmployeeInfo(testEmployees, "SPV", "PRO", 3200, count);
+	AddEmployeeInfo(testEmployees, "GM", "HR", 7000, count);
+
 	srand(time(0));
 	while(on) {
 		system("CLS");
-		choice = Menu();
+		choice = program->StartMenu();
 		if (choice == 5) { //5th menu option is closing the program
 			on = false;
 		}
@@ -45,7 +55,7 @@ int main() {
 		case 1: {
 			char searchAgain = 'Y';
 			while (searchAgain == 'Y' || searchAgain == 'y') {
-				chosenEmployee = Search(testEmployees, hardCodedIndex, option); //returned employee from search-function
+				chosenEmployee = Search(program, testEmployees, hardCodedIndex, option); //returned employee from search-function
 				//option is passed as a referense to know what to do with the returned object
 				if (chosenEmployee == -2) { //back to menu option in searchfunction
 					break;
@@ -60,7 +70,7 @@ int main() {
 						testEmployees.at(chosenEmployee)->getInfo(); //view employee profile
 						cin >> ans;
 						if (ans == 2) {
-							ModifyProfile(testEmployees, chosenEmployee);//modify the profile
+							ModifyProfile(program, testEmployees, chosenEmployee);//modify the profile
 						}
 						else {
 							break; //or go back to menu
@@ -68,7 +78,7 @@ int main() {
 
 					}
 					if (option == 2) {
-						ModifyProfile(testEmployees, chosenEmployee); //option 2 = modify profile
+						ModifyProfile(program, testEmployees, chosenEmployee); //option 2 = modify profile
 					}
 					if (option == 3) { //option 3 = delete profile
 
@@ -112,21 +122,6 @@ int main() {
 	}
 }
 
-int Menu() {
-	int choice;
-
-	cout << "WELCOME" << endl << endl;
-
-	cout << "(1) SEARCH EMPLOYEE" << endl;
-	cout << "(2) ADD EMPLOYEE" << endl;
-	cout << "(3) ALL EMPLOYEES (Present)" << endl;
-	cout << "(4) ALL EMPLOYEES (Present & past)" << endl;
-	cout << "(5) CLOSE PROGRAM" << endl;
-
-	cin >> choice;
-	return choice;
-}
-
 int RandomNumOrChar() {
 	static const char alphanum[] =
 		"0123456789"
@@ -148,28 +143,16 @@ string IDGenerator() {
 	return ID;
 }
 
-int ProfileMenu() {
-	system("CLS");
-	int choice;
-	cout << "(1) View profile info" << endl;
-	cout << "(2) Update employee info" << endl;
-	cout << "(3) Delete employee profile" << endl;
-	cout << "(4) Update salary and/or employment"<< endl;
-	cout << "(5) Calculate salary" << endl;
-	cout << "(6) Back to menu" << endl;
-	cin >> choice;
-	return choice;
-}
 
 
-int Search(vector <Employee*> listOfEmployees, int index, int& option) {
+int Search(Program *program, vector <Employee*> listOfEmployees, int index, int& option) {
 	string searchWord;
 	vector <Employee*> foundEmployees; //vector to store all found employees
 	int found = 0; //counter	
 	vector <int> indexPosition; //store index from list (database) 
 	int choice;
 
-	option = ProfileMenu(); //get option from user
+	option = program->ProfileMenu(); //get option from user
 	if (option == 6) {
 		return -2;
 	}
@@ -230,79 +213,63 @@ int Search(vector <Employee*> listOfEmployees, int index, int& option) {
 	}
 }
 
-int ModMenu(vector <Employee*> listOfEmployees, int chosenEmployee) {
-	int option;
-	cout << "(1) Name: " << listOfEmployees.at(chosenEmployee)->getName() << endl;
-	cout << "(2) Gender: " << listOfEmployees.at(chosenEmployee)->getGender() << endl;
-	cout << "(3) Date of birth: " << listOfEmployees.at(chosenEmployee)->getDateOfBirth() << endl;
-	cout << "(4) Designation: " << listOfEmployees.at(chosenEmployee)->getDesignation() << endl;
-	cout << "(5) Department: " << listOfEmployees.at(chosenEmployee)->getDepartment() << endl;
-	cout << "(6) Date of joining: " << listOfEmployees.at(chosenEmployee)->getDateOfJoining() << endl << endl << endl;
-
-	cout << "-Back to menu (7)-" << endl << endl;
-	cin >> option;
-	return option;
-}
-void ModifyProfile(vector <Employee*> listOfEmployees, int chosenEmployee) {
+void ModifyProfile(Program *program, vector <Employee*> listOfEmployees, int chosenEmployee) {
 	int option;
 
 	system("CLS");
 	cout << "CHOOSE FIELD TO UPDATE" << endl;
-	option = ModMenu(listOfEmployees, chosenEmployee);
+	option = program->ModMenu(listOfEmployees, chosenEmployee);
 	
 	ChangeInfo(listOfEmployees, chosenEmployee, option);
 
 }
 
+void Change(string infoToChange, vector <Employee*> listOfEmployees, int chosenEmployee) {
+	string info;
+	
+	cout << "Enter new " << infoToChange << ": ";
+	cin.ignore(1000, '\n');
+	getline(cin, info);
+	listOfEmployees.at(chosenEmployee)->setName(info);
+}
 
 void ChangeInfo(vector <Employee*> listOfEmployees, int chosenEmployee, int option) {
 	string newInfo;
 
 	switch (option) {
 	case 1: {
-		cout << "Enter new name: ";
-		cin.ignore(1000, '\n');
-		getline(cin, newInfo);
-		listOfEmployees.at(chosenEmployee)->setName(newInfo);
+		Change("name", listOfEmployees, chosenEmployee);
 		break;
 	}
 	case 2: {
-		cout << "Enter new gender: ";
-		getline(cin, newInfo);
-		cin.ignore(1000, '\n');
-		listOfEmployees.at(chosenEmployee)->setGender(newInfo);
+		Change("gender", listOfEmployees, chosenEmployee);
 		break;
 	}
 	case 3: {
-		cout << "Enter new date of birth [YYYY-MM-DD]: "; 
-		getline(cin, newInfo);
-		cin.ignore(1000, '\n');
-		listOfEmployees.at(chosenEmployee)->setDateOfBirth(newInfo);
+		Change("date of birth [YYYY-MM-DD]", listOfEmployees, chosenEmployee);
 		break;
 	}
 	case 4: {
-		cout << "Enter new designation: ";
-		getline(cin, newInfo);
-		cin.ignore(1000, '\n');
-		listOfEmployees.at(chosenEmployee)->setDesignation(newInfo);
+		Change("designation", listOfEmployees, chosenEmployee);
 		break;
 	}
 	case 5: {
-		cout << "Enter new department: ";
-		getline(cin, newInfo);
-		cin.ignore(1000, '\n');
-		listOfEmployees.at(chosenEmployee)->setDepartment(newInfo);
+		Change("department", listOfEmployees, chosenEmployee);
 		break;
 	}
 	case 6: {
-		cout << "Enter new date of joining [YYYY-MM-DD]: ";
-		getline(cin, newInfo);
-		cin.ignore(1000, '\n');
-		listOfEmployees.at(chosenEmployee)->setDateOfJoining(newInfo);
+		Change("date of joining [YYYY-MM-DD]", listOfEmployees, chosenEmployee);
 		break;
 	}
 	case 7: {
 		break;
 	}
 	}
+}
+
+void AddEmployeeInfo(vector <Employee*> listOfEmployees, string argDesignation, string argDepartment, int argSalary, int &count) {
+	listOfEmployees.at(count)->setDesignation(argDesignation);
+	listOfEmployees.at(count)->setDepartment(argDepartment);
+	listOfEmployees.at(count)->setSalary(argSalary);
+	count++;
 }
