@@ -11,6 +11,21 @@ Employee::~Employee()
 {
 }
 
+void Employee::setName(string argName)
+{
+	m_Name = argName;
+}
+
+void Employee::setGender(string argGender)
+{
+	m_Gender = argGender;
+}
+
+void Employee::setDateOfBirth(string argDOB)
+{
+	m_DateOfBirth = argDOB;
+}
+
 void Employee::setDesignation(std::string argDesignation)
 {
 	m_Designation = argDesignation;
@@ -28,6 +43,26 @@ void Employee::setDateOfJoining(std::string argDOJ)
 
 void Employee::setSalary(int argSalary) {
 	m_Salary = argSalary;
+}
+
+string Employee::getID()
+{
+	return m_ID;
+}
+
+string Employee::getName()
+{
+	return m_Name;
+}
+
+string Employee::getGender()
+{
+	return m_Gender;
+}
+
+string Employee::getDateOfBirth()
+{
+	return m_DateOfBirth;
 }
 
 std::string Employee::getDesignation()

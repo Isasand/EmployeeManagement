@@ -1,5 +1,5 @@
 #include "Employee.h"
-#include "Program.h"
+#include "TerminalInterface.h"
 #include <iostream>
 #include <String>
 #include <time.h>
@@ -8,16 +8,15 @@
 
 using namespace std;
 
-void AddEmployeeInfo(vector <Employee*> listOfEmployees, string argDesignation, string argDepartment, int argSalary, int &count);
 int RandomNumOrChar();
 string IDGenerator();
-int Search(Program *program, vector <Employee*> listOfEmployees, int index, int& option);
-void ModifyProfile(Program *program, vector <Employee*> listOfEmployees, int chosenEmployee);
-void Change(string infoToChange, vector <Employee*> listOfEmployees, int chosenEmployee);
+int Search(vector <Employee*> listOfEmployees, int index);
+void ModifyProfile(TerminalInterface *show, vector <Employee*> listOfEmployees, int chosenEmployee);
 void ChangeInfo(vector <Employee*> listOfEmployees, int chosenEmployee, int option);
 
+
 int main() {
-	Program *program = new Program();
+	TerminalInterface *show = new TerminalInterface();
 
 	int choice;
 	string ID;
@@ -30,24 +29,18 @@ int main() {
 	//adding database later
 	Employee *hardCodedEmp[4];
 
-	hardCodedEmp[0] = new Employee("Markus Svensson", "45Fk2%93", "Male", "1976:05:02");
-	hardCodedEmp[1] = new Employee("Johan Olsson", "42Dks=1A", "Male", "1953:04:22");
-	hardCodedEmp[2] = new Employee("Markus Svensson", "Ks01!2lR", "Male", "1983:02:08");
-	hardCodedEmp[3] = new Employee("Linda Skoge", "k#54uDl?", "Female", "1976:04:05");
-
+	hardCodedEmp[0] = new Employee("Markus Svensson", "Male", "45Fk2%93", "1976:05:02", "VD", "HR", 15000);
+	hardCodedEmp[1] = new Employee("Johan Olsson",  "Male", "42Dks=1A", "1953:04:22", "MD", "HR", 6400);
+	hardCodedEmp[2] = new Employee("Markus Svensson", "Male", "Ks01!2lR", "1983:02:08", "SPV", "PRO", 3200);
+	hardCodedEmp[3] = new Employee("Linda Skoge",  "Female", "k#54uDl?", "1976:04:05", "GM", "HR", 7000);
 
 	for (int i = 0; i < 4; i++)
 		testEmployees.push_back(hardCodedEmp[i]);
 
-	AddEmployeeInfo(testEmployees, "VD", "HR", 15000, count);
-	AddEmployeeInfo(testEmployees, "MD", "HR", 6400, count);
-	AddEmployeeInfo(testEmployees, "SPV", "PRO", 3200, count);
-	AddEmployeeInfo(testEmployees, "GM", "HR", 7000, count);
-
 	srand(time(0));
-	while(on) {
+	while (on) {
 		system("CLS");
-		choice = program->StartMenu();
+		choice = show->StartMenu(); //show startmenu
 		if (choice == 5) { //5th menu option is closing the program
 			on = false;
 		}
@@ -55,40 +48,33 @@ int main() {
 		case 1: {
 			char searchAgain = 'Y';
 			while (searchAgain == 'Y' || searchAgain == 'y') {
-				chosenEmployee = Search(program, testEmployees, hardCodedIndex, option); //returned employee from search-function
-				//option is passed as a referense to know what to do with the returned object
-				if (chosenEmployee == -2) { //back to menu option in searchfunction
+				chosenEmployee = Search(testEmployees, hardCodedIndex); //returned employee from search-function
+				
+				system("CLS");
+				testEmployees.at(chosenEmployee)->getInfo();//view profile of chosen employee
+				option = show->ProfileMenu();//choose what to do with it 
+
+				if (option == 5) { //option 5 is back to startmenu
 					break;
 				}
-
 				try {
-					if (option == 1) {//option 1 = view profile
-						int ans;
-						system("CLS");
-						cout << "Back to menu (1)" << endl;
-						cout << "Modify Profile (2)" << endl<< endl;
-						testEmployees.at(chosenEmployee)->getInfo(); //view employee profile
-						cin >> ans;
-						if (ans == 2) {
-							ModifyProfile(program, testEmployees, chosenEmployee);//modify the profile
-						}
-						else {
-							break; //or go back to menu
-						}
-
+					switch (option) {
+					case 1: { //modify
+						ModifyProfile(show, testEmployees, chosenEmployee);//modify the profile
+						break;
 					}
-					if (option == 2) {
-						ModifyProfile(program, testEmployees, chosenEmployee); //option 2 = modify profile
+					case 2: { //delete
+					
+						break;
 					}
-					if (option == 3) { //option 3 = delete profile
-
+					case 3: {//update salary/employment
+						break;
 					}
-					if (option == 4) { // change salary or employment
-
+					case 4: {//calculate salary, TODO make function that takes parameters employment and salary
+						break;
+					}
 					}
 
-					cout << testEmployees.at(chosenEmployee)->getName() << "<- returned from function" << endl;//testing
-					cout << endl << option << " <- option chosen" << endl;
 				}
 				catch (...) { //if function returns -1 
 					system("CLS");
@@ -144,64 +130,38 @@ string IDGenerator() {
 }
 
 
-
-int Search(Program *program, vector <Employee*> listOfEmployees, int index, int& option) {
+int Search(vector <Employee*> listOfEmployees, int index/*, int& option*/) {
 	string searchWord;
 	vector <Employee*> foundEmployees; //vector to store all found employees
 	int found = 0; //counter	
 	vector <int> indexPosition; //store index from list (database) 
 	int choice;
+	bool wrongInput = true;
 
-	option = program->ProfileMenu(); //get option from user
-	if (option == 6) {
-		return -2;
-	}
-	//mby you should be able to search by only first name or surname. later fix 
 	system("CLS");
 	cout << "Enter ID, name (forename surname), designation or department: ";
+
 	cin.ignore();
 	getline(cin, searchWord);
-	
 	for (int i = 0; i < index; i++) {
 		if ((listOfEmployees.at(i)->getID() == searchWord) || (listOfEmployees.at(i)->getDesignation() == searchWord) ||
-				(listOfEmployees.at(i)->getDepartment() == searchWord) || (listOfEmployees.at(i)->getName() == searchWord)) {
+			(listOfEmployees.at(i)->getDepartment() == searchWord) || (listOfEmployees.at(i)->getName() == searchWord)) { //comparing the employees and the searchword
 			foundEmployees.push_back(listOfEmployees.at(i)); //push back found employees 
-			indexPosition.push_back(i);
-			found++;
+			indexPosition.push_back(i); //push back index position from list of all employees (later data base)
+			found++; //counter for found employees
 		}
 	}
 
-	if (found > 1) {
-		cout << found << " employees found: " << endl << endl;
-
-		switch (option) {
-		case 1: {
-			cout << "Choose which profile to preview";
-			break;
-		}
-		case 2: {
-			cout << "Choose which profile to modify";
-			break;
-		}
-		case 3: {
-			cout << "Choose which profile to delete";
-			break;
-		}
-		case 4: {
-			cout << "Choose an employee to change salary/ employment";
-			break;
-		}
-		case 5: {
-			cout << "Choose employee for salary calculation";
-			break;
-		}
-		}
+	if (found > 1) { //if more than one employee is found
+		system("CLS"); //clear screen
+		cout << found << " employees found: " << endl;
 
 		for (int i = 0; i < found; i++) {
 			cout << endl << foundEmployees.at(i)->getName() << "(" << i + 1 << ") "; //print 
 		}
+		cout << endl << endl << "Choose Employee for preview: ";
 		cin >> choice;
-		return indexPosition.at(choice - 1); //return chosen employee
+		return indexPosition.at(choice - 1); //return chosen employee index
 	}
 
 	else if (found == 0) {
@@ -213,63 +173,72 @@ int Search(Program *program, vector <Employee*> listOfEmployees, int index, int&
 	}
 }
 
-void ModifyProfile(Program *program, vector <Employee*> listOfEmployees, int chosenEmployee) {
+void ModifyProfile(TerminalInterface *show, vector <Employee*> listOfEmployees, int chosenEmployee) {
 	int option;
 
 	system("CLS");
 	cout << "CHOOSE FIELD TO UPDATE" << endl;
-	option = program->ModMenu(listOfEmployees, chosenEmployee);
-	
+	option = show->ModMenu(listOfEmployees, chosenEmployee);
+
 	ChangeInfo(listOfEmployees, chosenEmployee, option);
 
 }
 
-void Change(string infoToChange, vector <Employee*> listOfEmployees, int chosenEmployee) {
-	string info;
-	
-	cout << "Enter new " << infoToChange << ": ";
-	cin.ignore(1000, '\n');
-	getline(cin, info);
-	listOfEmployees.at(chosenEmployee)->setName(info);
-}
 
 void ChangeInfo(vector <Employee*> listOfEmployees, int chosenEmployee, int option) {
 	string newInfo;
 
 	switch (option) {
 	case 1: {
-		Change("name", listOfEmployees, chosenEmployee);
+		cout << "Enter new name: ";
+		cin.ignore(1000, '\n');
+		getline(cin, newInfo);
+		listOfEmployees.at(chosenEmployee)->setName(newInfo);
+		cin.clear();
 		break;
 	}
 	case 2: {
-		Change("gender", listOfEmployees, chosenEmployee);
+		cout << "Enter new gender: ";
+		cin.ignore(1000, '\n');
+		getline(cin, newInfo);
+		listOfEmployees.at(chosenEmployee)->setGender(newInfo);
+		cin.clear();
 		break;
 	}
 	case 3: {
-		Change("date of birth [YYYY-MM-DD]", listOfEmployees, chosenEmployee);
+		cout << "Enter new date of birth: ";
+		cin.ignore(1000, '\n');
+		getline(cin, newInfo);
+		listOfEmployees.at(chosenEmployee)->setDateOfBirth(newInfo);
+		cin.clear();
 		break;
 	}
 	case 4: {
-		Change("designation", listOfEmployees, chosenEmployee);
+		cout << "Enter new designation: ";
+		cin.ignore(1000, '\n');
+		getline(cin, newInfo);
+		listOfEmployees.at(chosenEmployee)->setDesignation(newInfo);
+		cin.clear();
 		break;
 	}
 	case 5: {
-		Change("department", listOfEmployees, chosenEmployee);
+		cout << "Enter new department: ";
+		cin.ignore(1000, '\n');
+		getline(cin, newInfo);
+		listOfEmployees.at(chosenEmployee)->setDepartment(newInfo);
+		cin.clear();
 		break;
 	}
 	case 6: {
-		Change("date of joining [YYYY-MM-DD]", listOfEmployees, chosenEmployee);
+		cout << "Enter new date of joining: ";
+		cin.ignore(1000, '\n');
+		getline(cin, newInfo);
+		listOfEmployees.at(chosenEmployee)->setDateOfJoining(newInfo);
+		cin.clear();
 		break;
 	}
 	case 7: {
 		break;
 	}
 	}
-}
-
-void AddEmployeeInfo(vector <Employee*> listOfEmployees, string argDesignation, string argDepartment, int argSalary, int &count) {
-	listOfEmployees.at(count)->setDesignation(argDesignation);
-	listOfEmployees.at(count)->setDepartment(argDepartment);
-	listOfEmployees.at(count)->setSalary(argSalary);
-	count++;
 }

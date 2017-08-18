@@ -6,22 +6,16 @@ class User
 {
 public:
 	User();
-	User(string argname, string argPassword, string argGender, string argDateOfBirth);
+	User(string argUserName, string argPassword);
 	~User();
 
-	void setName(string argName);
-	void setGender(string argGender);
-	void setDateOfBirth(string argDOB);
+	void setUserName(string argUserName);
+	void setPassword(string argPassword);
 
-	string getID();
-	string getName();
-	string getGender();
-	string getDateOfBirth();
+	string getUserName();
+
 
 protected:
-	string m_ID;
+	string m_UserName;
 	string m_Password;
-	string m_Name;
-	string m_Gender;
-	string m_DateOfBirth;
 };

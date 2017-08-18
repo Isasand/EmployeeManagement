@@ -6,51 +6,28 @@ User::User()
 {
 }
 
-User::User(string argname, string argPassword, string argGender, string argDateOfBirth)
+User::User(string argUserName, string argPassword)
 {
-	m_Name = argname; 
+	m_UserName = argUserName; 
 	m_Password = argPassword;
-	m_Gender = argGender;
-	m_DateOfBirth = argDateOfBirth;
 
 }
-
 
 User::~User()
 {
 }
 
-void User::setName(string argName)
+void User::setPassword(string argPassword)
 {
-	m_Name = argName;
+	m_Password = argPassword;
 }
 
-void User::setGender(string argGender)
+void User::setUserName(string argUserName)
 {
-	m_Gender = argGender;
+	m_UserName = argUserName;
 }
 
-void User::setDateOfBirth(string argDOB)
+string User::getUserName()
 {
-	m_DateOfBirth = argDOB;
-}
-
-string User::getID()
-{
-	return m_ID;
-}
-
-string User::getName()
-{
-	return m_Name;
-}
-
-string User::getGender()
-{
-	return m_Gender;
-}
-
-string User::getDateOfBirth()
-{
-	return m_DateOfBirth;
+	return m_UserName;
 }
